@@ -1,0 +1,9 @@
+{
+  "field_1": {
+    "label": "Field 1",
+    "messages": {
+      "required": "{{ label }} is a required field",
+      "minLength": "{{ label }} minimum length is {{ schema.minLength }}"
+    }
+  }
+}
