@@ -1,0 +1,7 @@
+/vendor
+/bin
+coverage
+.buildpath
+.project
+.settings
+composer.lock
