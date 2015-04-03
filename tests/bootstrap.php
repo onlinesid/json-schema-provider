@@ -1,6 +1,6 @@
 <?php
 
-define('TESTS_ROOT_DIR', __DIR__);
+define('TESTS_BASE_DIR', __DIR__);
 
 $autoloadFile = __DIR__. '/../vendor/autoload.php';
 if (! is_readable($autoloadFile)) {

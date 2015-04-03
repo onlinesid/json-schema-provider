@@ -13,14 +13,14 @@
          verbose="true"
 >
     <testsuites>
-        <testsuite name="JSON Schema Test Suite">
+        <testsuite name="Json Schema Silex Provider Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>./src/JsonSchema/</directory>
+            <directory>./src/</directory>
         </whitelist>
     </filter>
 </phpunit>
