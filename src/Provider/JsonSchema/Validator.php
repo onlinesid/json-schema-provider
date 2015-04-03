@@ -24,11 +24,13 @@ class Validator
     }
 
     /**
+     * Validate specified array of data against json-schema and returns the validation result.
+     *
      * @param array $args
      * @return ValidationResult
      */
     public function validate($args)
     {
-
+        return new ValidationResult($args);
     }
 }
