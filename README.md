@@ -48,6 +48,8 @@ $validation_result = $validator->validate(array(
 ```
 ####json-schema/booking.json
 See [json-schema](http://json-schema.org/) for more details.
+
+This is your json schema containing constraints/rules
 ```json
 {
   "type": "object",
@@ -66,6 +68,7 @@ See [json-schema](http://json-schema.org/) for more details.
 }
 ```
 ####json-message/booking.json
+You can specify your own custom error messages.
 ```json
 {
   "first_name": {
