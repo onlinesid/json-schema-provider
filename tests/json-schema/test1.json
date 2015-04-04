@@ -6,6 +6,10 @@
       "required": true,
       "minLength": 10
     },
+    "field_2": {
+      "type": "string",
+      "maxLength": 10
+    },
     "age": {
       "type": "string",
       "pattern": "\\d+"

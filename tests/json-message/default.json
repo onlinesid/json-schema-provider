@@ -1,0 +1,7 @@
+{
+  "messages": {
+    "required": "Required field.",
+    "minLength": "Must be {{ schema.minLength }} chars or more.",
+    "pattern": "Incorrect format"
+  }
+}

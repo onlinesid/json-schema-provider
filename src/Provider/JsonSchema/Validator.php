@@ -37,14 +37,26 @@ class Validator
         );
 
         $validator = new \JsonSchema\Validator();
-        $obj = (object) $args['request']; print_r($obj);
-        $validator->check($obj, $args['json_schema']);
+        $obj = (object) $args['request'];
+
+        $json_schema_path = $this->options['json_schema_dir'].$args['json_schema'];
+        $json_schema = json_decode(file_get_contents($json_schema_path));
+
+        $validator->check($obj, $json_schema);
         if (!$validator->isValid())
         {
 
-            if (isset($args['json_message']) && $args['json_message'] instanceof \stdClass)
+            if (isset($args['json_message']))
             {
-                $json_message = $args['json_message'];
+                $json_message_path = $this->options['json_message_dir'].$args['json_message'];
+                $json_message = json_decode(file_get_contents($json_message_path));
+                /* @var $json_message \stdClass */
+            }
+
+            if (isset($this->options['default_json_message']))
+            {
+                $json_default_message_path = $this->options['json_message_dir'] . $this->options['default_json_message'];
+                $json_default_message = json_decode(file_get_contents($json_default_message_path));
                 /* @var $json_message \stdClass */
             }
 
@@ -91,6 +103,35 @@ class Validator
                         $result['messages'][$property][$constraint] = array(
                             'message' => $custom_message,
                         );
+                    }
+                    // no custom message, try default custom message
+                    else if (isset($json_default_message) && $json_default_message)
+                    {
+                        try {
+                            $custom_message = @$json_default_message->messages->$constraint;
+                        } catch (\Exception $e) {}
+
+                        if ($custom_message)
+                        {
+                            //
+                            // Find & replace the variables in the custom message
+                            //
+
+                            $find = array();
+                            $replace = array();
+
+                            foreach ($error as $key => $val)
+                            {
+                                $find[] = "{{ schema.$key }}";
+                                $replace[] = $val;
+                            }
+
+                            $custom_message = str_replace($find, $replace, $custom_message);
+
+                            $result['messages'][$property][$constraint] = array(
+                                'message' => $custom_message,
+                            );
+                        }
                     }
                 }
 
