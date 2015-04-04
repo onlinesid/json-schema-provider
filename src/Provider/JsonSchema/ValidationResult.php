@@ -11,11 +11,16 @@ namespace OnlineSid\Silex\Provider\JsonSchema;
 class ValidationResult
 {
     /**
+     * @var array
+     */
+    private $data;
+
+    /**
      * @param array $args
      */
     public function __construct($args)
     {
-
+        $this->data = $args;
     }
 
     /**
@@ -25,7 +30,7 @@ class ValidationResult
      */
     public function isValid()
     {
-        return true;
+        return $this->data['is_valid'];
     }
 
     /**
@@ -35,6 +40,9 @@ class ValidationResult
      */
     public function getJsonResult()
     {
-        return array();
+        return array(
+            'is_valid' => $this->data['is_valid'],
+            'messages' => @$this->data['messages'],
+        );
     }
 }
