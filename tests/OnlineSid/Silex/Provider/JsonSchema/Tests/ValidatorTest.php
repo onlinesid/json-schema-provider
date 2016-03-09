@@ -176,6 +176,6 @@ class ValidatorTest extends BaseTestCase
         $this->assertArrayHasKey('field_2', $arr['messages']);
         $this->assertArrayHasKey('maxLength', $arr['messages']['field_2']);
         $this->assertArrayHasKey('message', $arr['messages']['field_2']['maxLength']);
-        $this->assertEquals("field_2 must be at most 10 characters long", $arr['messages']['field_2']['maxLength']['message']);
+        $this->assertEquals("field_2 Must be at most 10 characters long", $arr['messages']['field_2']['maxLength']['message']);
     }
 }
