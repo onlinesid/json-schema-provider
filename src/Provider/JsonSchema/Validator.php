@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sid
- * Date: 4/04/15
- * Time: 1:13 AM
- */
 
 namespace OnlineSid\Silex\Provider\JsonSchema;
 
@@ -24,12 +18,13 @@ class Validator
     }
 
     /**
-     * Validate specified array of data against json-schema and returns the validation result.
-     *
-     * @param array $args
+     * @param \stdClass $json_data request data to validate
+     * @param \stdClass $json_schema json schema
+     * @param \stdClass $json_message the custom user friendly error messages
+     * @param \stdClass $json_default_message the default user friendly error messages
      * @return ValidationResult
      */
-    public function validate($args)
+    public function validateDataVsSchema($json_data, $json_schema, $json_message = null, $json_default_message=null)
     {
         $result = array(
             'is_valid' => false,
@@ -37,29 +32,10 @@ class Validator
         );
 
         $validator = new \JsonSchema\Validator();
-        $obj = (object) $args['request'];
 
-        $json_schema_path = $this->options['json_schema_dir'].$args['json_schema'];
-        $json_schema = json_decode(file_get_contents($json_schema_path));
-
-        $validator->check($obj, $json_schema);
+        $validator->check($json_data, $json_schema);
         if (!$validator->isValid())
         {
-
-            if (isset($args['json_message']))
-            {
-                $json_message_path = $this->options['json_message_dir'].$args['json_message'];
-                $json_message = json_decode(file_get_contents($json_message_path));
-                /* @var $json_message \stdClass */
-            }
-
-            if (isset($this->options['default_json_message']))
-            {
-                $json_default_message_path = $this->options['json_message_dir'] . $this->options['default_json_message'];
-                $json_default_message = json_decode(file_get_contents($json_default_message_path));
-                /* @var $json_message \stdClass */
-            }
-
             $result['messages'] = array();
             foreach ($validator->getErrors() as $error) {
                 $property = $error['property'];
@@ -72,13 +48,13 @@ class Validator
 
                 // if custom message is specified
                 // let's use custom message
-                if (isset($json_message))
+                if (isset($json_message) && $json_message)
                 {
                     try {
                         $custom_message = @$json_message->$property->messages->$constraint;
                     } catch (\Exception $e) {}
 
-                    if ($custom_message)
+                    if (isset($custom_message) && $custom_message)
                     {
                         //
                         // Find & replace the variables in the custom message
@@ -111,7 +87,7 @@ class Validator
                             $custom_message = @$json_default_message->messages->$constraint;
                         } catch (\Exception $e) {}
 
-                        if ($custom_message)
+                        if (isset($custom_message) && $custom_message)
                         {
                             //
                             // Find & replace the variables in the custom message
@@ -144,5 +120,39 @@ class Validator
         }
 
         return new ValidationResult($result);
+    }
+
+    /**
+     * Validate specified array of data against json-schema and returns the validation result.
+     *
+     * @param array $args
+     * @return ValidationResult
+     */
+    public function validate($args)
+    {
+        $obj = (object) $args['request'];
+
+        $json_schema_path = $this->options['json_schema_dir'].$args['json_schema'];
+        $json_schema = json_decode(file_get_contents($json_schema_path));
+
+        $json_message = null;
+        if (isset($args['json_message']))
+        {
+            $json_message_path = $this->options['json_message_dir'].$args['json_message'];
+            $json_message = json_decode(file_get_contents($json_message_path));
+            /* @var $json_message \stdClass */
+        }
+
+        $json_default_message = null;
+        if (isset($this->options['default_json_message']))
+        {
+            $json_default_message_path = $this->options['json_message_dir'] . $this->options['default_json_message'];
+            $json_default_message = json_decode(file_get_contents($json_default_message_path));
+            /* @var $json_message \stdClass */
+        }
+
+        $result = $this->validateDataVsSchema($obj, $json_schema, $json_message, $json_default_message);
+
+        return $result;
     }
 }
