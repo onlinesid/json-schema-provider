@@ -2,7 +2,7 @@
   "name": "onlinesid/json-schema-provider",
   "description": "Json Schema Silex Service Provider",
   "minimum-stability": "dev",
-  "license": "MIT License",
+  "license": "MIT",
   "authors": [
     {
       "name": "Sid Bachtiar",
